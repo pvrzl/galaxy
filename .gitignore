@@ -3,3 +3,4 @@ vendor*
 *.html
 fmt
 .DS_Store
+cmd/galaxy
