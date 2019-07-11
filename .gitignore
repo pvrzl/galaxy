@@ -2,3 +2,4 @@ vendor*
 *.out
 *.html
 fmt
+.DS_Store
