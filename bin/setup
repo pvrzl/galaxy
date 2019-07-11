@@ -1,0 +1,10 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
+echo $DIR
+cd $DIR/../cmd && go build -o galaxy
+go test github.com/homina/galaxy/internal -coverprofile internal.out
+go test github.com/homina/galaxy/pkg/convertRoman -coverprofile convertRoman.out
+go test github.com/homina/galaxy/pkg/input -coverprofile input.out
+
+
+

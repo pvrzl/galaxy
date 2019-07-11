@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/homina/galaxy/pkg/convertRoman/entity.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package convertRoman
+
+import (
+        "errors"
+        "regexp"
+        "strings"
+
+        "github.com/homina/galaxy/internal"
+)
+
+var (
+        // ErrInvalidRoman occured when romanString is not valid roman numeric
+        ErrInvalidRoman = errors.New("Invalid roman structure/format")
+        // ErrInvalidRomanChar occured when invalid roman character found
+        ErrInvalidRomanChar = errors.New("Invalid roman character")
+        symbols             = []string{
+                "M", "CM", "D", "CD",
+                "C", "XC", "L", "XL",
+                "X", "IX", "V", "IV",
+                "I"}
+)
+
+var romanMap = map[string]int{
+        "I": 1,
+        "V": 5,
+        "X": 10,
+        "L": 50,
+        "C": 100,
+        "D": 500,
+        "M": 1000,
+}
+
+// RomanType hold the romanstring and roman character alias
+type RomanType struct {
+        romanString string
+        alias       map[string]string
+}
+
+// New return predefined roman type
+func New(romanString string) RomanType {
+        </span>return RomanType{
+                romanString: romanString,
+                alias:       make(map[string]string),
+        }
+</span>}
+
+</span>// IsNil Check wether the alias is nil or not
+f<span class="cov8" title="1">unc (r RomanType) IsNil() bool {
+        return r.alias == nil
+}
+</span>
+// SetAlias Set alias for roman character
+func (r RomanType) SetAlias(origin string, alias string) (RomanType, error) <span class="cov8" title="1">{
+        if !internal.Contains([]string{"I", "V"</span><span class="cov8" title="1">, "X", "L", "C", "D", "M"}, origin) {
+                return r, ErrInvalidRomanChar
+        }</span>
+
+        <span class="cov8" title="1">r.alias[alias] = origin
+        return r, nil</span>
+}
+
+func (r RomanType) IsAlias(alias string) bo<span class="cov8" title="1">ol {
+        _, ok := r.alias[alias]
+        return ok
+}
+</span>
+func (r RomanType) SetValue(val</span><span class="cov8" title="1">ue string) RomanType {
+        r.romanString = value
+        re</span>turn <span class="cov8" title="1">r
+}
+
+</span>fu<span class="cov8" title="1">nc (r RomanType) Valu</span><span class="cov8" title="1">e() (int, error) {
+        if len(r.alias) &gt; 0 {
+                w</span>ords := strings.Split(r.romanString, " ")
+                <span class="cov8" title="1">romanString := []string{}
+                for _, word := ran</span>ge words {
+                        if val, ok := r.alias[word]; ok {
+        <span class="cov8" title="1">                        romanStri</span>ng = append(romanString, val)
+                        } else {
+                                romanString = append(romanString, word)
+                        }
+                }
+</span>                r.romanString = strings.Join(romanString, "")
+        }</span>
+
+        <span class="cov8" title="1">if !r.validation() {
+</span>                return 0, ErrInvalidRoman
+        }</span>
+
+</span>        c := strings.Split(r.romanString, "")
+        value := r.compute(c)
+        return value, nil
+}
+</span>
+fu</span>nc (r RomanType) compute(c []string) int {
+        lastDigit := 1000
+        <span class="cov8" title="1">latin := 0
+        for _, v := range c {
+                var digit int
+                if val, ok := r.alias[v]; ok {
+                        digit = romanMap[val]
+                } else {
+                        digit = romanMap[v]
+                }
+                if lastDigit &lt; digit {
+                        latin -= 2</span><span class="cov8" title="1"> * lastDigit
+                }
+                lastDigit = digit
+                latin += lastDigit
+</span>        }
+        return latin
+}
+
+fun</span>c (r RomanType) validation() bool {
+        i<span class="cov8" title="1">f r</span>.romanString == "" {
+                return false
+        <span class="cov8" title="1">}
+</span>
+        if check, _ := regexp.MatchString("^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", r.romanString); check == true {
+                return check
+        }
+        return false
+}
+
+func Reverse(num int) string {
+        if num == 0 {
+                return ""
+        }
+
+        values := []int{
+                1000, 900, 500, 400,
+                100, 90, 50, 40,
+                10, 9, 5, 4, 1,
+        }
+
+        roman := ""
+        i := 0
+
+        for num &gt; 0 {
+
+                k := num / values[i]
+                for j := 0; j &lt; k; j++ {
+
+                        roman += symbols[i]
+
+                        num -= values[i]
+                }
+                i++
+        }
+        return roman
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
