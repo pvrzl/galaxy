@@ -1,37 +1,42 @@
-package input
+package romanParser
 
 import (
 	"testing"
 
-	"github.com/homina/galaxy/pkg/convertRoman"
+	convertRoman "galaxy/pkg/roman"
 )
 
 func TestCommandParser(t *testing.T) {
-	roman = convertRoman.New("")
-	thingsPrice = make(map[string]float32)
+	roman := convertRoman.New("")
+	parser := NewDefaultParser(roman)
+
 	listTests := map[string]error{
 		"bogj":        ErrInvalidCommand,
 		"bogj is IGG": ErrUnknownRomanSymbols,
 		"bogj is I":   nil,
+		"glob is I":   nil,
+		"prok is V":   nil,
+		"pish is X":   nil,
 	}
 
 	for k, v := range listTests {
-		if commandParser(k) != v {
-			t.Errorf("%v should return %v, instead got : %v", k, v, commandParser(k))
+		if parser.Parse(k) != v {
+			t.Errorf("%v should return %v, instead got : %v", k, v, parser.Parse(k))
 		}
 	}
 
 	listTests = map[string]error{
-		"bogj is jgob credits":                    ErrInvalidCommand,
-		"bogj jgob hgoj is 800 credits":           ErrUnknowPrice,
-		"bogj jgob bogj is 800 credits":           ErrInvalidCommand,
-		"bogj bogj bogj bogj hgoj is 900 credits": convertRoman.ErrInvalidRoman,
-		"bogj jgob is 800 credits":                nil,
+		"bogj is jgob credits":                      ErrInvalidCommand,
+		"bogj jgob hgoj is 800 credits":             ErrUnknowPrice,
+		"bogj jgob bogj is 800 credits":             ErrInvalidCommand,
+		"bogj bogj bogj bogj hgoj is 900 credits":   convertRoman.ErrInvalidRoman,
+		"bogj jgob is 800 credits":                  nil,
+		"glob prok has less Credits than pish pish": nil,
 	}
 
 	for k, v := range listTests {
-		if commandParser(k) != v {
-			t.Errorf("%v should return %v, instead got : %v", k, v, commandParser(k))
+		if parser.Parse(k) != v {
+			t.Errorf("%v should return %v, instead got : %v", k, v, parser.Parse(k))
 		}
 	}
 
@@ -47,8 +52,8 @@ func TestCommandParser(t *testing.T) {
 	}
 
 	for k, v := range listTests {
-		if commandParser(k) != v {
-			t.Errorf("%v should return %v, instead got : %v", k, v, commandParser(k))
+		if parser.Parse(k) != v {
+			t.Errorf("%v should return %v, instead got : %v", k, v, parser.Parse(k))
 		}
 	}
 

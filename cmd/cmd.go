@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/homina/galaxy/pkg/input"
+	"galaxy/pkg/input"
 )
 
 func main() {

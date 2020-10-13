@@ -1,4 +1,4 @@
-package convertRoman
+package roman
 
 import (
 	"strings"
@@ -9,7 +9,7 @@ func TestNewRoman(t *testing.T) {
 	str := "hello"
 	var roman interface{}
 	roman = New(str)
-	data, ok := roman.(RomanType)
+	data, ok := roman.(*RomanType)
 	if !ok {
 		t.Errorf("new func should return roman type")
 	}
@@ -20,7 +20,7 @@ func TestNewRoman(t *testing.T) {
 }
 
 func TestIsNil(t *testing.T) {
-	roman := RomanType{}
+	roman := &RomanType{}
 	if !roman.IsNil() {
 		t.Errorf(`roman alias should be nil if not invoked by New func`)
 	}
@@ -71,7 +71,7 @@ func TestSetValue(t *testing.T) {
 	if roman.romanString != "" {
 		t.Errorf("the roman string should be empty if invoked by empty params ")
 	}
-	roman = roman.SetValue("halo")
+	roman.SetValue("halo")
 	if roman.romanString != "halo" {
 		t.Errorf("the roman string should be halo if set by setvalue fn")
 	}
@@ -79,12 +79,12 @@ func TestSetValue(t *testing.T) {
 
 func TestAlias(t *testing.T) {
 	roman := New("MM")
-	_, err := roman.SetAlias("F", "Fck")
+	err := roman.SetAlias("F", "Fck")
 	if err != ErrInvalidRomanChar {
 		t.Errorf("set alias should return error when called with invalid roman char")
 	}
 
-	_, err = roman.SetAlias("I", "Idiot")
+	err = roman.SetAlias("I", "Idiot")
 	if err != nil {
 		t.Errorf("set alias should not return error when called with valid roman char")
 	}
@@ -126,9 +126,9 @@ func TestCompute(t *testing.T) {
 	// convert with alias
 	str := "glob glob fyuh"
 	roman := New(str)
-	roman, _ = roman.SetAlias("X", "glob")
-	roman, _ = roman.SetAlias("V", "fyuh")
-	roman, _ = roman.SetAlias("C", "huha")
+	roman.SetAlias("X", "glob")
+	roman.SetAlias("V", "fyuh")
+	roman.SetAlias("C", "huha")
 
 	value := roman.compute(strings.Split(str, " "))
 	if value != 25 {
@@ -185,9 +185,9 @@ func TestValue(t *testing.T) {
 
 	for k, v := range testListsWithAlias {
 		roman := New(k)
-		roman, _ = roman.SetAlias("X", "glob")
-		roman, _ = roman.SetAlias("V", "fyuh")
-		roman, _ = roman.SetAlias("C", "huha")
+		roman.SetAlias("X", "glob")
+		roman.SetAlias("V", "fyuh")
+		roman.SetAlias("C", "huha")
 		value, _ := roman.Value()
 		if value != v {
 			t.Errorf("the value func with alias should return %v when called with %v", v, k)
@@ -200,7 +200,7 @@ func TestValue(t *testing.T) {
 
 	for k, v := range testListWithAliasInvalid {
 		roman := New(k)
-		roman, _ = roman.SetAlias("V", "fyuh")
+		roman.SetAlias("V", "fyuh")
 		_, err := roman.Value()
 		if err != v {
 			t.Errorf("the value func with alias which has invalid format should return %v when called with %v", v, k)

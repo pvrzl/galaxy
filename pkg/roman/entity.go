@@ -1,16 +1,16 @@
-package convertRoman
+package roman
 
 import (
 	"errors"
 	"regexp"
 	"strings"
 
-	"github.com/homina/galaxy/internal"
+	"galaxy/internal"
 )
 
 var (
 	// ErrInvalidRoman occured when romanString is not valid roman numeric
-	ErrInvalidRoman = errors.New("Invalid roman structure/format")
+	ErrInvalidRoman = errors.New("Requested number is in invalid format")
 	// ErrInvalidRomanChar occured when invalid roman character found
 	ErrInvalidRomanChar = errors.New("Invalid roman character")
 	symbols             = []string{
@@ -37,42 +37,42 @@ type RomanType struct {
 }
 
 // New return predefined roman type
-func New(romanString string) RomanType {
-	return RomanType{
+func New(romanString string) *RomanType {
+	return &RomanType{
 		romanString: romanString,
 		alias:       make(map[string]string),
 	}
 }
 
 // IsNil Check wether the alias is nil or not
-func (r RomanType) IsNil() bool {
+func (r *RomanType) IsNil() bool {
 	return r.alias == nil
 }
 
 // SetAlias Set alias for roman character
-func (r RomanType) SetAlias(origin string, alias string) (RomanType, error) {
+func (r *RomanType) SetAlias(origin string, alias string) error {
 	if !internal.Contains([]string{"I", "V", "X", "L", "C", "D", "M"}, origin) {
-		return r, ErrInvalidRomanChar
+		return ErrInvalidRomanChar
 	}
 
 	r.alias[alias] = origin
-	return r, nil
+	return nil
 }
 
 // IsAlias is a func to check if the alias is already taken
-func (r RomanType) IsAlias(alias string) bool {
+func (r *RomanType) IsAlias(alias string) bool {
 	_, ok := r.alias[alias]
 	return ok
 }
 
 // SetValue is a func to set romanstring value
-func (r RomanType) SetValue(value string) RomanType {
+func (r *RomanType) SetValue(value string) {
 	r.romanString = value
-	return r
+
 }
 
 // Value is a func to get numeric value of romanString
-func (r RomanType) Value() (int, error) {
+func (r *RomanType) Value() (int, error) {
 	if len(r.alias) > 0 {
 		words := strings.Split(r.romanString, " ")
 		romanString := []string{}
@@ -95,7 +95,7 @@ func (r RomanType) Value() (int, error) {
 	return value, nil
 }
 
-func (r RomanType) compute(c []string) int {
+func (r *RomanType) compute(c []string) int {
 	lastDigit := 1000
 	latin := 0
 	for _, v := range c {
@@ -114,7 +114,7 @@ func (r RomanType) compute(c []string) int {
 	return latin
 }
 
-func (r RomanType) validation() bool {
+func (r *RomanType) validation() bool {
 	if r.romanString == "" {
 		return false
 	}

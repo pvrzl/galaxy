@@ -13,3 +13,24 @@ func TestContains(t *testing.T) {
 		t.Errorf("contains should return false when c is not in [a,b]")
 	}
 }
+
+func TestStringHas(t *testing.T) {
+	val, ok := StringHas("halo more", []string{
+		"more",
+	})
+	if !ok {
+		t.Errorf("StringHas should return true when more is in halo more")
+	}
+
+	if val != "more" {
+		t.Errorf("StringHas should return 'more' when more is in halo more")
+	}
+
+	_, ok = StringHas("halo", []string{
+		"more",
+	})
+
+	if ok {
+		t.Errorf("StringHas should not return true when more is in halo more")
+	}
+}
